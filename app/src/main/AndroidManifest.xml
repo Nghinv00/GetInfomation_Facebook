@@ -29,7 +29,8 @@
 
         <activity android:name=".ListFriendActivity" />
         <activity android:name=".ListFanpageActivity" />
-        <activity android:name=".InboxActivity"></activity>
+        <activity android:name=".InboxActivity" />
+        <activity android:name=".ListFriend_Taggable"></activity>
     </application>
 
 </manifest>

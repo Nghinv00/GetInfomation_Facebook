@@ -62,7 +62,7 @@ public class InfoActivity extends AppCompatActivity {
         linearLayout = (LinearLayout) findViewById(R.id.ln1);
 
         btnLogin.setReadPermissions(Arrays.asList(
-                "public_profile", "email", "user_birthday", "user_friends","user_likes","read_mailbox"));
+                "public_profile", "email", "user_birthday", "user_friends","user_likes"));
 
         btnLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -70,10 +70,36 @@ public class InfoActivity extends AppCompatActivity {
                 AccessToken accessToken = loginResult.getAccessToken();
                 AccessToken token = AccessToken.getCurrentAccessToken();
 
+
+                /**
+                 * Danh sách bạn bè theo : taggable_friends
+                 */
+                new GraphRequest(
+                        loginResult.getAccessToken(),
+                        "me/taggable_friends",
+                        null,
+                        HttpMethod.GET,
+                        new GraphRequest.Callback() {
+                            public void onCompleted(GraphResponse response) {
+                                Intent intent = new Intent(InfoActivity.this , ListFriend_Taggable.class);
+                                try {
+                                    JSONArray rawName = response.getJSONObject().getJSONArray("data");
+                                    JSONObject rawName1 = response.getJSONObject().getJSONObject("paging");
+
+                                    intent.putExtra("JSONDATA", rawName.toString());
+                                    intent.putExtra("PAGING", rawName1.toString());
+                                    startActivity(intent);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                ).executeAsync();
+
                 /**
                  * Danh sách fanpage đã like:
                  */
-                GraphRequestAsyncTask graphRequestAsyncTask = new GraphRequest(
+             /*   GraphRequestAsyncTask graphRequestAsyncTask = new GraphRequest(
                         loginResult.getAccessToken(),
                         "/me/likes",
                         null,
@@ -93,14 +119,15 @@ public class InfoActivity extends AppCompatActivity {
                             }
                         }
                 ).executeAsync();
-
+*/
 
                 /**
-                 * Cách 3 : láy danh sách bạn bè :
+                 * Cách 3 : láy danh sách bạn bè friend :
                  */
-                GraphRequestAsyncTask graphRequestAsyncTask1 = new GraphRequest(
+               /* GraphRequestAsyncTask graphRequestAsyncTask1 = new GraphRequest(
                         loginResult.getAccessToken(),
-                        "/me/friends",
+                        // "/me/friends",
+                        "me/friends",
                         null,
                         HttpMethod.GET,
                         new GraphRequest.Callback() {
@@ -118,7 +145,7 @@ public class InfoActivity extends AppCompatActivity {
                                 }
                             }
                         }
-                ).executeAsync();
+                ).executeAsync();*/
 
                  /**
                  * Cách 1 : Sử dụng phiên bản < 2.5 để lấy danh sách bạn bè nhưng chỉ lấy được tổng số bạn bè
@@ -146,7 +173,7 @@ public class InfoActivity extends AppCompatActivity {
                  /**
                  * Lấy toàn bộ thông tin của người dùng ứng dụng
                  */
-                     /*  GraphRequest request = GraphRequest.newMeRequest( accessToken , new GraphRequest.GraphJSONObjectCallback(){
+  /*                     GraphRequest request = GraphRequest.newMeRequest( accessToken , new GraphRequest.GraphJSONObjectCallback(){
                             @Override
                             public void onCompleted( JSONObject object, GraphResponse reponse){
                                 JSONArray arrFriend;
@@ -159,6 +186,9 @@ public class InfoActivity extends AppCompatActivity {
                                     locale = object.getString("locale");
                                     name = object.getString("name");
                                     email = object.getString("email");
+                                    JSONObject location = object.getJSONObject("location");
+                                    String location_id = location.getString("id");
+                                    String location_name = location.getString("name");
                                     profilePictureView.setPresetSize(ProfilePictureView.NORMAL);
                                     profilePictureView.setProfileId(object.getString("id"));
                                     linearLayout.setVisibility(View.VISIBLE);
@@ -175,8 +205,7 @@ public class InfoActivity extends AppCompatActivity {
 //                param.putString("fields", "friendlist");
                 request.setParameters(param);
                 request.executeAsync();
-                */
-
+*/
                 /**
                  * Cách 2 : sử dụng phiên bản mới nhất để lấy DS bạn bè
                  *  Giá trị trả về :  {"summary":{"total_count":359 },"data":[]}
